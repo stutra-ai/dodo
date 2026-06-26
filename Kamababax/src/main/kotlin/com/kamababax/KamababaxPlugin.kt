@@ -1,11 +1,11 @@
-package com.pinaycum
+package com.kamababax
 
 import com.lagradost.cloudstream3.plugins.CloudstreamPlugin
 import com.lagradost.cloudstream3.plugins.BasePlugin
 
 @CloudstreamPlugin
-class PinayCumPlugin : BasePlugin() {
+class KamababaxPlugin : BasePlugin() {
     override fun load() {
-        registerMainAPI(PinayCum())
+        registerMainAPI(Kamababax)
     }
 }

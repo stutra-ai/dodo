@@ -4,6 +4,6 @@
   "description": "+18 Repo",
   "manifestVersion": 1,
   "pluginLists": [
-    "https://raw.githubusercontent.com/stutra-ai/pinayctv/refs/heads/builds/plugins.json"
+    "https://raw.githubusercontent.com/stutra-ai/dodo/refs/heads/builds/plugins.json"
   ]
 }
