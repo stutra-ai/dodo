@@ -8,7 +8,7 @@ class Kamababax : MainAPI() {
     override var mainUrl = "https://www.kamababax.com"
     override var name = "Kamababax"
     override val supportedTypes = setOf(TvType.NSFW)
-    override var lang = "en"
+    override var lang = "hi"
     override val hasMainPage = true
     override val hasQuickSearch = true
 
@@ -97,7 +97,7 @@ class Kamababax : MainAPI() {
         val rawHtml = document.toString()
         var found = false
 
-        // 1. Scan for direct streams matching your reference structure format
+        // 1. Scan for direct streams
         listOf(
             Regex("""["']?(https?://[^"']+\.(?:mp4|m3u8))["']"""),
             Regex("""source\s*:\s*["']([^"']+\.(?:mp4|m3u8))["']"""),
@@ -109,13 +109,14 @@ class Kamababax : MainAPI() {
                     val fixedLink = fixUrl(link)
                     val isM3u8 = fixedLink.contains(".m3u8")
                     
+                    // FIXED: Using pure positional arguments with newExtractorLink to prevent parameter naming conflicts
                     callback(
-                        ExtractorLink(
-                            source = name,
-                            name = if (isM3u8) "HLS" else "MP4",
-                            url = fixedLink,
-                            referer = mainUrl,
-                            type = if (isM3u8) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
+                        newExtractorLink(
+                            name,
+                            if (isM3u8) "HLS" else "MP4",
+                            fixedLink,
+                            mainUrl,
+                            if (isM3u8) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
                         )
                     )
                     found = true
