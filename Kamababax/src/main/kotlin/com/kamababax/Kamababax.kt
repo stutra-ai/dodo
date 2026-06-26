@@ -8,7 +8,7 @@ class Kamababax : MainAPI() {
     override var mainUrl = "https://www.kamababax.com"
     override var name = "Kamababax"
     override val supportedTypes = setOf(TvType.NSFW)
-    override var lang = "hi"
+    override var lang = "en"
     override val hasMainPage = true
     override val hasQuickSearch = true
 
@@ -54,8 +54,15 @@ class Kamababax : MainAPI() {
                 Regex("url\\([\"']?(.*?)['\"]?\\)").find(it)?.groupValues?.get(1)
             }
 
+        if (poster != null) {
+            if (poster.startsWith("//")) {
+                poster = "https:$poster"
+            }
+            poster = fixUrl(poster)
+        }
+
         return newMovieSearchResponse(title, href, TvType.NSFW) {
-            this.posterUrl = fixUrlNull(poster)
+            this.posterUrl = poster
         }
     }
 
@@ -64,14 +71,18 @@ class Kamababax : MainAPI() {
         val title = document.selectFirst("h1.entry-title, .title")?.text()?.trim() 
             ?: "Kamababax Video"
 
-        val poster = document.selectFirst("meta[property=og:image]")?.attr("content")
+        var poster = document.selectFirst("meta[property=og:image]")?.attr("content")
             ?: document.selectFirst("img.wp-post-image, .featured-image img")?.attr("src")
+
+        if (poster != null) {
+            poster = fixUrl(poster)
+        }
 
         val description = document.selectFirst("meta[property=og:description]")?.attr("content")
             ?: document.selectFirst(".entry-content p")?.text()
 
         return newMovieLoadResponse(title, url, TvType.NSFW, url) {
-            this.posterUrl = fixUrlNull(poster)
+            this.posterUrl = poster
             this.plot = description
         }
     }
@@ -86,7 +97,7 @@ class Kamababax : MainAPI() {
         val rawHtml = document.toString()
         var found = false
 
-        // 1. Scan for direct streams
+        // 1. Scan for direct streams matching your reference structure format
         listOf(
             Regex("""["']?(https?://[^"']+\.(?:mp4|m3u8))["']"""),
             Regex("""source\s*:\s*["']([^"']+\.(?:mp4|m3u8))["']"""),
@@ -99,11 +110,11 @@ class Kamababax : MainAPI() {
                     val isM3u8 = fixedLink.contains(".m3u8")
                     
                     callback(
-                        newExtractorLink(
+                        ExtractorLink(
                             source = name,
                             name = if (isM3u8) "HLS" else "MP4",
                             url = fixedLink,
-                            referer = data,
+                            referer = mainUrl,
                             type = if (isM3u8) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
                         )
                     )
@@ -116,7 +127,7 @@ class Kamababax : MainAPI() {
         document.select("iframe[src], embed[src]").mapNotNull { 
             fixUrlNull(it.attr("src")) 
         }.forEach { embedUrl ->
-            if (loadExtractor(embedUrl, data, subtitleCallback, callback)) {
+            if (loadExtractor(embedUrl, mainUrl, subtitleCallback, callback)) {
                 found = true
             }
         }
