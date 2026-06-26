@@ -109,15 +109,16 @@ class Kamababax : MainAPI() {
                     val fixedLink = fixUrl(link)
                     val isM3u8 = fixedLink.contains(".m3u8")
                     
-                    // FIXED: Using pure positional arguments with newExtractorLink to prevent parameter naming conflicts
+                    // FIXED: Aligned positional arguments matching (name, source, url, type) { lambda }
                     callback(
                         newExtractorLink(
                             name,
                             if (isM3u8) "HLS" else "MP4",
                             fixedLink,
-                            mainUrl,
-                            if (isM3u8) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
-                        )
+                            type = if (isM3u8) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
+                        ) {
+                            this.referer = mainUrl
+                        }
                     )
                     found = true
                 }
