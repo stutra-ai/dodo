@@ -1,22 +1,22 @@
 [
     {
-        "url": "https://raw.githubusercontent.com/stutra-ai/dodo/builds/PinayCum.cs3",
+        "url": "https://raw.githubusercontent.com/stutra-ai/dodo/builds/Kamababax.cs3",
         "status": 1,
-        "version": -1,
-        "name": "PinayCum",
-        "internalName": "PinayCum",
+        "version": 1,
+        "name": "Kamababax",
+        "internalName": "Kamababax",
         "authors": [
-            "Grok"
+            "dodo"
         ],
-        "description": "PinayCum.tv - Filipino / Pinay adult videos",
-        "fileSize": 19218,
+        "description": "Kamababax - Desi Indian sex videos",
+        "fileSize": 13224,
         "repositoryUrl": "https://github.com/stutra-ai/dodo",
-        "language": "tl",
+        "language": "en",
         "tvTypes": [
             "NSFW"
         ],
-        "iconUrl": "https://pinaycum.tv/favicon.ico",
+        "iconUrl": "https://www.kamababax.com/favicon.ico",
         "apiVersion": 1,
-        "fileHash": "sha256-e962dfea157b9d7742e6e662588faf704b5fd6b571b3c032d2502022cc5423c2"
+        "fileHash": "sha256-f6800277ec16f3219276d97153350202b75e421863c15bf44d3b3b08e8abd0f9"
     }
 ]
