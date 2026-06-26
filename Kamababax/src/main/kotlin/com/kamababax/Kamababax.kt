@@ -54,10 +54,8 @@ class Kamababax : MainAPI() {
                 Regex("url\\([\"']?(.*?)['\"]?\\)").find(it)?.groupValues?.get(1)
             }
 
-        poster = fixUrlNull(poster)
-
         return newMovieSearchResponse(title, href, TvType.NSFW) {
-            this.posterUrl = poster
+            this.posterUrl = fixUrlNull(poster)
         }
     }
 
@@ -86,10 +84,9 @@ class Kamababax : MainAPI() {
     ): Boolean {
         val document = app.get(data, referer = mainUrl).document
         val rawHtml = document.toString()
-
         var found = false
 
-        // FluidPlayer + common direct sources
+        // 1. Scan for direct streams
         listOf(
             Regex("""["']?(https?://[^"']+\.(?:mp4|m3u8))["']"""),
             Regex("""source\s*:\s*["']([^"']+\.(?:mp4|m3u8))["']"""),
@@ -98,14 +95,18 @@ class Kamababax : MainAPI() {
             regex.findAll(rawHtml).forEach { match ->
                 val link = match.groupValues[1]
                 if (link.contains(".mp4") || link.contains(".m3u8")) {
-                    val fixedLink = fixUrl(link, mainUrl)
+                    // FIX: fixUrl only accepts 1 string argument
+                    val fixedLink = fixUrl(link)
+                    val isM3u8 = fixedLink.contains(".m3u8")
+                    
                     callback(
                         newExtractorLink(
                             source = name,
-                            name = if (fixedLink.contains(".m3u8")) "HLS" else "MP4",
+                            name = if (isM3u8) "HLS" else "MP4",
                             url = fixedLink,
-                            referer = data,
-                            type = if (fixedLink.contains(".m3u8")) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
+                            // FIX: referer removed from constructor, injected via headers map instead
+                            headers = mapOf("Referer" to data),
+                            type = if (isM3u8) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
                         )
                     )
                     found = true
@@ -113,8 +114,14 @@ class Kamababax : MainAPI() {
             }
         }
 
-        // Try universal extractors for any embed (dood, lulu, etc.)
-        loadExtractor(data, mainUrl, subtitleCallback, callback) // fallback on whole page
+        // 2. Extract embedded iFrames & load them through standard Extractors
+        document.select("iframe[src], embed[src]").mapNotNull { 
+            fixUrlNull(it.attr("src")) 
+        }.forEach { embedUrl ->
+            if (loadExtractor(embedUrl, data, subtitleCallback, callback)) {
+                found = true
+            }
+        }
 
         return found
     }
