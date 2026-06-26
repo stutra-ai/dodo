@@ -9,7 +9,6 @@ cloudstream {
     authors = listOf("dodo")
     language = "en" // or multi
     description = "Kamababax - Desi Indian sex videos"
-    isNsfw = true
     status = 1 // Working
     tvTypes = listOf("NSFW")
     iconUrl = "https://www.kamababax.com/favicon.ico" // optional
