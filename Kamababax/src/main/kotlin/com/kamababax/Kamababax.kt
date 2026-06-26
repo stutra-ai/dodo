@@ -95,7 +95,6 @@ class Kamababax : MainAPI() {
             regex.findAll(rawHtml).forEach { match ->
                 val link = match.groupValues[1]
                 if (link.contains(".mp4") || link.contains(".m3u8")) {
-                    // FIX: fixUrl only accepts 1 string argument
                     val fixedLink = fixUrl(link)
                     val isM3u8 = fixedLink.contains(".m3u8")
                     
@@ -104,8 +103,7 @@ class Kamababax : MainAPI() {
                             source = name,
                             name = if (isM3u8) "HLS" else "MP4",
                             url = fixedLink,
-                            // FIX: referer removed from constructor, injected via headers map instead
-                            headers = mapOf("Referer" to data),
+                            referer = data,
                             type = if (isM3u8) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
                         )
                     )
