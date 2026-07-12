@@ -8,8 +8,8 @@ version = 1
 cloudstream {
     authors = listOf("dodo")
     language = "en" // or multi
-    description = "Kamababax - Desi Indian sex videos"
+    description = "Javtitful"
     status = 1 // Working
     tvTypes = listOf("NSFW")
-    iconUrl = "https://www.kamababax.com/favicon.ico" // optional
+    iconUrl = "https://cdn.pixabay.com/photo/2024/10/22/12/41/q-9139532_960_720.png" // optional
 }
